@@ -25,7 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 
-const publicPath = path.resolve(__dirname, "public");
+const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
 app.use(errorHandler);
