@@ -33,34 +33,18 @@ You can view the live project here:
 
 ---
 
-## Project Structure
-```text
-.
-├── config/             # Database connection setup
-├── controllers/        # Logic for handling API requests
-├── middleware/         # Error handling and Auth verification
-├── models/             # Mongoose schemas (User, Post)
-├── public/             # Frontend assets (HTML, CSS, JS)
-│   ├── auth.css        # Authentication styles
-│   ├── style.css       # Main blog styles
-│   └── index.html      # Main entry point
-├── routes/             # API route definitions
-├── .env                # Environment variables (Hidden for security)
-├── server.js           # Main application entry point
-└── package.json        # Project dependencies and scripts
-```
-##Local Setup Instructions for MOSAIC
+## Local Setup Instructions for MOSAIC
 
-###Clone the repository: Run the following command in your terminal:
+### Clone the repository: Run the following command in your terminal:
 ```
 git clone https://github.com/AknurOE/mosaic.git
 ```
-###Install dependencies: Navigate to the project folder and install the required packages:
+### Install dependencies: Navigate to the project folder and install the required packages:
 ```
 npm install
 ```
 
-###Configure Environment Variables: Create a file named .env in the root directory and add the following lines:
+### Configure Environment Variables: Create a file named .env in the root directory and add the following lines:
 ```
 PORT=5001
 MONGO_URI=your_mongodb_connection_string
@@ -68,7 +52,7 @@ JWT_SECRET=your_secret_key
 ```
 (Note: Replace the placeholders with your actual MongoDB URI and a secure secret key.)
 
-###Run the server: Start the application locally:
+### Run the server: Start the application locally:
 ```
 npm start
 ```
