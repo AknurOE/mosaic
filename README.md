@@ -32,6 +32,32 @@ You can view the live project here:
 * **Vanilla JavaScript**: Asynchronous communication with the Backend API using `fetch`.
 
 ---
+## API Documentation
+
+This project follows a RESTful API structure. Private endpoints require a valid JWT token sent in the `Authorization` header as `Bearer <token>`.
+
+### Authentication Routes (Public)
+| Method | Endpoint | Description | Access |
+|:---|:---|:---|:---|
+| POST | `/api/auth/register` | Register a new user with a hashed password | Public |
+| POST | `/api/auth/login` | Authenticate user and return a JWT token | Public |
+
+### User Routes (Private)
+| Method | Endpoint | Description | Access |
+|:---|:---|:---|:---|
+| GET | `/api/users/profile` | Retrieve the logged-in user's profile | Private |
+| PUT | `/api/users/profile` | Update user profile information | Private |
+
+### Post (Resource) Routes (Private)
+| Method | Endpoint | Description | Access |
+|:---|:---|:---|:---|
+| POST | `/api/posts` | Create a new blog post | Private |
+| GET | `/api/posts` | Get all blog posts | Private |
+| GET | `/api/posts/:id` | Get a specific post by ID | Private |
+| PUT | `/api/posts/:id` | Update an existing post | Private |
+| DELETE | `/api/posts/:id` | Delete a post | Private |
+
+---
 
 ## Local Setup Instructions for MOSAIC
 
