@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MOSAIC | Personal Blog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo-area">
+            <h2 onclick="location.href='index.html'" style="cursor:pointer">MOSAIC</h2>
+            <small>Space for your stories</small>
+        </div>
+        <div id="userInfo">
+            <span id="welcomeMsg"></span>
+            <a href="profile.html" id="settingsBtn" style="display:none; margin-left:15px; color:var(--tech); text-decoration:none; font-weight:bold;">Settings</a>
+            <button onclick="logout()" id="logoutBtn" style="display:none; margin-left:15px; background:#636e72;">Logout</button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Explore Worlds & Ideas</h1>
+        <p>Tech, Travel, Food & Lifestyle — Your daily dose of inspiration</p>
+    </header>
+
+    <div class="container" id="mainContainer">
+        <aside class="form-section" id="createFormSection" style="display: none;">
+            <h3 id="formTitle">Create a New Story</h3>
+            <input type="text" id="pTitle" placeholder="Title">
+            <select id="pCat">
+                <option value="tech">Technology</option>
+                <option value="travel">Travel</option>
+                <option value="lifestyle">Lifestyle</option>
+                <option value="food">Food</option>
+            </select>
+            <textarea id="pContent" placeholder="Your story..."></textarea>
+            <button id="submitPostBtn" onclick="handlePostSubmit()" style="width:100%">Publish</button>
+            <button id="cancelEditBtn" onclick="resetForm()" style="width:100%; margin-top:10px; background:#b2bec3; display:none;">Cancel Edit</button>
+        </aside>
+
+        <main>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="feedTitle" style="margin:0">Recent Posts</h2>
+                <div id="filterBtns" style="display:none;">
+                    <button onclick="getPosts('/api/posts', 'Recent Posts')" class="filter-btn">All Feed</button>
+                    <button onclick="getPosts('/api/posts/my', 'My Stories')" class="filter-btn">My Stories</button>
+                </div>
+            </div>
+            <div id="postsList"></div>
+        </main>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        let editPostId = null; 
+
+        function parseJwt(token) {
+            try { return JSON.parse(atob(token.split('.')[1])); } catch(e) { return null; }
+        }
+
+        async function init() {
+            const formSection = document.getElementById('createFormSection');
+            const container = document.getElementById('mainContainer');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const filterBtns = document.getElementById('filterBtns');
+
+            if (token) {
+                await getProfile();
+                if (formSection) formSection.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'inline-block';
+                if (settingsBtn) settingsBtn.style.display = 'inline-block';
+                if (filterBtns) filterBtns.style.display = 'block';
+                if (container) container.classList.remove('centered');
+            } else {
+                document.getElementById('welcomeMsg').innerHTML = '<a href="login.html" style="color:var(--tech); text-decoration:none; font-weight:bold;">Login</a> to post';
+                if (container) container.classList.add('centered');
+            }
+            await getPosts();
+        }
+
+        async function getProfile() {
+            try {
+                const res = await fetch('/api/users/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('welcomeMsg').innerText = `Hello, ${data.username}`;
+                }
+            } catch(e) { console.log("Profile error"); }
+        }
+
+        async function getPosts(url = '/api/posts', title = 'Recent Posts') {
+            document.getElementById('feedTitle').innerText = title;
+            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+            const res = await fetch(url, { headers });
+            const posts = await res.json();
+            const list = document.getElementById('postsList');
+            const userId = token ? parseJwt(token).id : null;
+
+            list.innerHTML = posts.map(p => `
+                <div class="post-card">
+                    <div class="card-content">
+                        <span class="tag tag-${p.category}">${p.category}</span>
+                        <h2>${p.title}</h2>
+                        <p>${p.content}</p>
+                        <div class="post-footer">
+                            <span>By <strong>${p.author?.username || 'Guest'}</strong></span>
+                            <span> ${new Date(p.createdAt).toLocaleDateString()}</span>
+                            <div class="actions">
+                                ${userId === (p.author?._id || p.author) ? `
+                                    <button class="edit-btn" onclick="prepareEdit('${p._id}')">Edit</button>
+                                    <button class="del-btn" onclick="deletePost('${p._id}')">Delete</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join(''); 
+        }
+
+        async function handlePostSubmit() {
+            if (editPostId) {
+                await updatePost();
+            } else {
+                await createPost();
+            }
+        }
+
+        async function createPost() {
+            const title = document.getElementById('pTitle').value;
+            const category = document.getElementById('pCat').value;
+            const content = document.getElementById('pContent').value;
+            if(!title || !content) return alert("Fill all fields");
+
+            const res = await fetch('/api/posts', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ title, category, content })
+            });
+            if (res.ok) resetForm(true);
+        }
+
+        async function prepareEdit(id) {
+            const res = await fetch(`/api/posts/${id}`);
+            const post = await res.json();
+            
+            document.getElementById('pTitle').value = post.title;
+            document.getElementById('pCat').value = post.category;
+            document.getElementById('pContent').value = post.content;
+            
+            editPostId = id;
+            document.getElementById('formTitle').innerText = "Update Story";
+            document.getElementById('submitPostBtn').innerText = "Update Story";
+            document.getElementById('cancelEditBtn').style.display = "block";
+            window.scrollTo(0, 0);
+        }
+
+        async function updatePost() {
+            const title = document.getElementById('pTitle').value;
+            const category = document.getElementById('pCat').value;
+            const content = document.getElementById('pContent').value;
+
+            const res = await fetch(`/api/posts/${editPostId}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ title, category, content })
+            });
+
+            if (res.ok) resetForm(true);
+        }
+
+        async function deletePost(id) {
+            if (confirm('Delete?')) {
+                await fetch(`/api/posts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                location.reload();
+            }
+        }
+
+        function resetForm(reload = false) {
+            editPostId = null;
+            document.getElementById('pTitle').value = '';
+            document.getElementById('pContent').value = '';
+            document.getElementById('formTitle').innerText = "Create a New Story";
+            document.getElementById('submitPostBtn').innerText = "Publish";
+            document.getElementById('cancelEditBtn').style.display = "none";
+            if (reload) location.reload();
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        init();
+    </script>
+</body>
+</html>

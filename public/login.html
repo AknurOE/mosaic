@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | MOSAIC</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <div class="auth-container">
+        <form id="loginForm" class="auth-form">
+            <h1>Welcome Back</h1>
+            <p>Enter your details to sign in to your account</p>
+            
+            <div id="error" class="error-box" style="display: none;"></div>
+            
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="name@example.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="auth-btn">Sign In</button>
+            
+            <div class="auth-footer">
+                New user? <a href="register.html">Create an account</a>
+            </div>
+            
+            <div class="auth-footer" style="margin-top: 10px;">
+                <a href="index.html" style="color: var(--text-muted); font-weight: 400;">← Back to feed</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const errorBox = document.getElementById('error');
+            errorBox.style.display = 'none';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/auth/login', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    window.location.href = 'index.html';
+                } else {
+                    errorBox.innerText = data.message || 'Invalid email or password';
+                    errorBox.style.display = 'block';
+                }
+            } catch (err) {
+                errorBox.innerText = 'Server connection error. Please try again later.';
+                errorBox.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>

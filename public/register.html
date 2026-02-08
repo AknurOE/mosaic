@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join MOSAIC | Register</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <div class="auth-container">
+        <form id="registerForm" class="auth-form">
+            <h1>Create Account</h1>
+            <p>Join our community and start sharing your stories</p>
+            
+            <div id="error" class="error-box" style="display: none;"></div>
+            
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="johndoe" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="name@example.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Min. 6 characters" required minlength="6">
+            </div>
+            
+            <button type="submit" class="auth-btn">Create Account</button>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+
+            <div class="auth-footer" style="margin-top: 10px;">
+                <a href="index.html" style="color: var(--text-muted); font-weight: 400;">← Back to feed</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const errorBox = document.getElementById('error');
+            errorBox.style.display = 'none';
+
+            const payload = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    window.location.href = 'index.html';
+                } else {
+                    errorBox.innerText = data.message || 'Registration failed. Try another email.';
+                    errorBox.style.display = 'block';
+                }
+            } catch (err) {
+                errorBox.innerText = 'Server error. Please try again later.';
+                errorBox.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>

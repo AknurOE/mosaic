@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary: #1a1a1a;
+    --accent: #000000; 
+    --tech: #0ea5e9;
+    --travel: #f43f5e;
+    --food: #eab308;
+    --lifestyle: #8b5cf6;
+    --bg: #fafafa;
+    --card-bg: #ffffff;
+    --text-muted: #64748b;
+    --radius: 12px;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    color: var(--primary);
+    line-height: 1.6;
+}
+
+nav {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px); 
+    padding: 1rem 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav h2 {
+    font-size: 1.2rem;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.logo-area {
+    display: flex;
+    flex-direction: column; 
+    cursor: pointer;
+}
+
+.logo-area:hover h2 {
+    color: var(--tech);
+    transition: 0.3s;
+}
+
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://plus.unsplash.com/premium_photo-1661384285193-68acbf8a6e1a?q=80&w=1467&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; 
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    font-weight: 300;
+    margin-top: 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 3rem;
+    padding: 0 20px 50px 20px;
+    transition: all 0.3s ease;
+}
+
+.container.centered {
+    display: flex;
+    justify-content: center;
+}
+
+.container.centered main {
+    max-width: 800px;
+    width: 100%;
+}
+
+.container.centered main h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.form-section {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    height: fit-content;
+    border: 1px solid #e2e8f0;
+    position: sticky;
+    top: 100px;
+}
+
+input, textarea, select {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    padding: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+textarea {
+    min-height: 120px; 
+    max-width: 100%; /* Фикс вылетания */
+    resize: vertical; 
+}
+
+.post-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    margin-bottom: 2.5rem;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-content {
+    padding: 2.5rem;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.tag-tech { background: #e0f2fe; color: var(--tech); }
+.tag-travel { background: #ffe4e6; color: var(--travel); }
+.tag-food { background: #fef9c3; color: var(--food); }
+.tag-lifestyle { background: #f3e8ff; color: var(--lifestyle); }
+
+.post-card h2 {
+    font-size: 1.8rem;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.post-card p {
+    color: #475569;
+    font-size: 1.1rem;
+    white-space: pre-wrap; 
+    word-wrap: break-word;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.del-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    padding: 6px 12px;
+}
+
+.logout-btn {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid #e2e8f0;
+}
+
+@media (max-width: 900px) {
+    .container, .container.centered {
+        display: block;
+        padding: 0 15px;
+    }
+    .form-section {
+        position: static;
+        margin-bottom: 2rem;
+    }
+}
